@@ -7,10 +7,15 @@ export const createGoalRoute: FastifyPluginAsyncZod = async app => {
     '/goals',
     {
       schema: {
+        tags: ['goals'],
+        description: 'Create a goal',
         body: z.object({
           title: z.string(),
           desiredWeeklyFrequency: z.number().int().min(1).max(7),
         }),
+        response: {
+          201: z.null(),
+        },
       },
     },
     async (request, reply) => {
@@ -20,6 +25,8 @@ export const createGoalRoute: FastifyPluginAsyncZod = async app => {
         title,
         desiredWeeklyFrequency,
       })
+
+      return reply.status(201).send()
     }
   )
 }
