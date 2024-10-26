@@ -15,6 +15,20 @@
       "when": 1725971826307,
       "tag": "0001_useful_mad_thinker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729862239678,
+      "tag": "0002_red_night_thrasher",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729862401334,
+      "tag": "0003_quiet_slyde",
+      "breakpoints": true
     }
   ]
 }
