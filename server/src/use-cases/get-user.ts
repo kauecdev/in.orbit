@@ -10,7 +10,7 @@ export async function getUser({ userId }: GetUserRequest) {
   const result = await db
     .select({
       id: users.id,
-      name: users.id,
+      name: users.name,
       email: users.email,
       avatarUrl: users.avatarUrl,
     })
