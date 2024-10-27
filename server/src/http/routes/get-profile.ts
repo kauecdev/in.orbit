@@ -2,25 +2,24 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { getWeekPendingGoals } from '../../use-cases/get-week-pending-goals'
 import z from 'zod'
 import { authenticateUserHook } from '../hooks/authenticate-user'
+import { getUser } from '../../use-cases/get-user'
 
-export const getWeekPendingGoalsRoute: FastifyPluginAsyncZod = async app => {
+export const getProfileRoute: FastifyPluginAsyncZod = async app => {
   app.get(
     '/pending-goals',
     {
       onRequest: [authenticateUserHook],
       schema: {
-        tags: ['goals'],
-        description: 'Get week pending goals',
+        tags: ['auth'],
+        description: 'Get authenticated profile',
         response: {
           200: z.object({
-            pendingGoals: z.array(
-              z.object({
-                goalId: z.string(),
-                title: z.string(),
-                desiredWeeklyFrequency: z.number(),
-                completionCount: z.number(),
-              })
-            ),
+            profile: z.object({
+              id: z.string(),
+              name: z.string().nullable(),
+              email: z.string().nullable(),
+              avatarUrl: z.string().url(),
+            }),
           }),
         },
       },
@@ -28,11 +27,11 @@ export const getWeekPendingGoalsRoute: FastifyPluginAsyncZod = async app => {
     async (request, reply) => {
       const userId = request.user.sub
 
-      const { pendingGoals } = await getWeekPendingGoals({
+      const { user } = await getUser({
         userId,
       })
 
-      await reply.status(200).send({ pendingGoals })
+      await reply.status(200).send({ profile: user })
     }
   )
 }
