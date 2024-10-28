@@ -23,6 +23,8 @@ jobs:
           --health-retries 10
 
     steps:
+      - run: cd server
+
       - uses: actions/checkout@v4
 
       - uses:  actions/setup-node@v4
@@ -30,6 +32,5 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - run: cd server
       - run: npm ci
       - run: npm run test
