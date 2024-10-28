@@ -23,9 +23,9 @@ jobs:
           --health-retries 10
 
     steps:
-      - run: cd server
-
       - uses: actions/checkout@v4
+
+      - run: cd ./server
 
       - uses:  actions/setup-node@v4
         with:
