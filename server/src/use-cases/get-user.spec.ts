@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { db } from '../db'
-import { users } from '../db/schema'
 import { getUser } from './get-user'
 import { makeUser } from '../../test/factories/make-user'
 
