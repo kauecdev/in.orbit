@@ -1,7 +1,7 @@
 import { CheckCircle2, Plus } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import ptBr from 'dayjs/locale/pt-BR'
+import 'dayjs/locale/pt-br'
 import { Button } from './ui/button'
 import { DialogTrigger } from './ui/dialog'
 import { InOrbitIcon } from './in-orbit-icon'
@@ -10,7 +10,7 @@ import { Separator } from './ui/separator'
 import { getSummary } from '../http/get-summary'
 import { PendingGoals } from './pending-goals'
 
-dayjs.locale(ptBr)
+dayjs.locale('pt-br')
 
 export function Summary() {
   const { data: summaryData } = useQuery({
