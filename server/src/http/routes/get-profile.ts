@@ -6,7 +6,7 @@ import { getUser } from '../../use-cases/get-user'
 
 export const getProfileRoute: FastifyPluginAsyncZod = async app => {
   app.get(
-    '/pending-goals',
+    '/profile',
     {
       onRequest: [authenticateUserHook],
       schema: {
