@@ -3,7 +3,7 @@ import { makeUser } from '../../test/factories/make-user'
 import { getUserExperienceAndLevel } from './get-user-experience-and-level'
 import {
   calculateLevelFromExperience,
-  calculateTotalExperienceForLevel,
+  calculateExperienceForNextLevel,
 } from '../modules/gamification'
 
 describe('get user experience and level', () => {
@@ -19,7 +19,7 @@ describe('get user experience and level', () => {
     expect(sut).toEqual({
       experience: 200,
       level,
-      experienceToNextLevel: calculateTotalExperienceForLevel(level),
+      experienceToNextLevel: calculateExperienceForNextLevel(level),
     })
   })
 })
