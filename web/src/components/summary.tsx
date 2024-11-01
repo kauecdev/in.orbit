@@ -1,4 +1,4 @@
-import { CheckCircle2, Plus } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
 import { Button } from './ui/button'
@@ -7,12 +7,10 @@ import { InOrbitIcon } from './in-orbit-icon'
 import { Progress, ProgressIndicator } from './ui/progress-bar'
 import { Separator } from './ui/separator'
 import { PendingGoals } from './pending-goals'
-import {
-  useGetProfile,
-  type GetWeekSummary200Summary,
-} from '../http/generated/api'
+import type { GetWeekSummary200Summary } from '../http/generated/api'
 import { UserProfile } from './user-profile'
 import { UserLevel } from './user-level'
+import { useSearchParams } from 'react-router-dom'
 
 dayjs.locale('pt-br')
 
@@ -21,12 +19,46 @@ interface SummaryProps {
 }
 
 export function Summary({ summary }: SummaryProps) {
-  const firstDayOfWeek = dayjs().startOf('week').format('D MMM')
-  const lastDayOfWeek = dayjs().endOf('week').format('D MMM')
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const weekStartsAtParam = searchParams.get('week_starts_at')
+
+  const weekStartsAt = weekStartsAtParam
+    ? new Date(weekStartsAtParam)
+    : new Date()
+
+  const fromDate = dayjs(weekStartsAt).startOf('week').format('D MMM')
+  const toDate = dayjs(weekStartsAt).endOf('week').format('D MMM')
 
   const completedPercentage = summary.total
     ? Math.round((summary.completed * 100) / summary.total)
     : 0
+
+  function handleNextWeek() {
+    const params = new URLSearchParams(searchParams)
+
+    params.set(
+      'week_starts_at',
+      dayjs(weekStartsAt).add(7, 'days').toISOString()
+    )
+
+    setSearchParams(params)
+  }
+
+  function handlePreviousWeek() {
+    const params = new URLSearchParams(searchParams)
+
+    params.set(
+      'week_starts_at',
+      dayjs(weekStartsAt).subtract(7, 'days').toISOString()
+    )
+
+    setSearchParams(params)
+  }
+
+  const isCurrentWeek = dayjs(dayjs(weekStartsAt).endOf('week')).isAfter(
+    new Date()
+  )
 
   return (
     <main className="py-10 max-w-[600px] px-5 mx-auto flex flex-col gap-6">
@@ -40,18 +72,35 @@ export function Summary({ summary }: SummaryProps) {
           <div className="flex items-center gap-3">
             <InOrbitIcon />
             <span className="text-lg font-semibold capitalize">
-              {firstDayOfWeek} - {lastDayOfWeek}
+              {fromDate} - {toDate}
             </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={handlePreviousWeek}
+              >
+                <ArrowLeft className="size-4" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={handleNextWeek}
+                disabled={isCurrentWeek}
+              >
+                <ArrowRight className="size-4" />
+              </Button>
+            </div>
           </div>
           <DialogTrigger asChild>
-            <Button size="sm">
+            <Button size="sm" disabled={!isCurrentWeek}>
               <Plus className="size-4" />
               Cadastrar meta
             </Button>
           </DialogTrigger>
         </div>
         <div className="flex flex-col gap-3">
-          <Progress value={8} max={15}>
+          <Progress value={summary.completed} max={summary.total ?? 1}>
             <ProgressIndicator style={{ width: `${completedPercentage}%` }} />
           </Progress>
           <div className="flex items-center justify-between text-xs text-zinc-400">
@@ -67,7 +116,7 @@ export function Summary({ summary }: SummaryProps) {
 
         <Separator />
 
-        <PendingGoals />
+        {isCurrentWeek && <PendingGoals />}
 
         <div className="flex flex-col gap-6">
           <h2 className="text-xl font-medium">Sua semana</h2>
