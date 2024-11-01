@@ -16,8 +16,12 @@ import { Button } from './ui/button'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createGoal } from '../http/create-goal'
 import { useQueryClient } from '@tanstack/react-query'
+import {
+  getGetWeekPendingGoalsQueryKey,
+  getGetWeekSummaryQueryKey,
+  useCreateGoal,
+} from '../http/generated/api'
 
 const createGoalFormSchema = z.object({
   title: z.string().min(1, 'Informe a atividade que deseja realizar'),
@@ -33,14 +37,20 @@ export function CreateGoal() {
       resolver: zodResolver(createGoalFormSchema),
     })
 
+  const { mutateAsync: createGoal } = useCreateGoal()
+
   async function handleCreateGoal(data: CreateGoalFormSchema) {
     await createGoal({
-      title: data.title,
-      desiredWeeklyFrequency: data.desiredWeeklyFrequency,
+      data: {
+        title: data.title,
+        desiredWeeklyFrequency: data.desiredWeeklyFrequency,
+      },
     })
 
-    queryClient.invalidateQueries({ queryKey: ['summary'] })
-    queryClient.invalidateQueries({ queryKey: ['pending-goals'] })
+    queryClient.invalidateQueries({
+      queryKey: getGetWeekPendingGoalsQueryKey(),
+    })
+    queryClient.invalidateQueries({ queryKey: getGetWeekSummaryQueryKey() })
 
     reset()
   }
